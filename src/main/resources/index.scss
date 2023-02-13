@@ -1,0 +1,24 @@
+header{
+  position: sticky;
+  width: 100%;
+  height: auto;
+  background-color: #ffffff;
+  float: left;
+  div{
+    position: relative;
+    display: inline-block;
+    margin: 0 2%;
+    height: 10px;
+    width: auto;
+  }
+  img{
+    width: 100px;
+    height: auto;
+    margin: 0 10px
+  }
+}
+
+body{
+  background-color: #a8a8a8;
+}
+

@@ -3,3 +3,5 @@
 /build/
 /gradle/
 /tmp/
+/src/main/resources/index.css
+/src/main/resources/index.css.map
