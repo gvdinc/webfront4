@@ -1,27 +1,26 @@
 package components
 
 import data.HeaderData
-import data.URLS
 import react.*
-import react.RBuilder
-import react.RProps
-import react.dom.*
-
+import react.dom.div
+import react.dom.header
+import react.dom.img
+import react.dom.p
+import remote.URLS
 
 
 external interface HeaderProps : RProps{
     var headerData: HeaderData
-    var urls: URLS
 }
 
 val Header: FunctionalComponent<HeaderProps> = functionalComponent { props ->
     header("header"){
         div("header__logo"){
             img{
-                attrs.src = props.urls.headerLogoURLKt
+                attrs.src = URLS.HEADER_LOGO_URL_KT
             }
             img{
-                attrs.src = props.urls.headerLogoURLSpring
+                attrs.src = URLS.HEADER_LOGO_URL_SPRING
             }
         }
         div("header__fio"){
@@ -37,6 +36,5 @@ val Header: FunctionalComponent<HeaderProps> = functionalComponent { props ->
 }
 
 fun RBuilder.myHeader() = child(Header) {
-    attrs.urls = URLS()
     attrs.headerData = HeaderData()
 }

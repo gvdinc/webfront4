@@ -1,12 +1,13 @@
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
-import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.*
+import react.dom.attrs
+import react.dom.div
+import react.dom.input
 
 external interface WelcomeProps : RProps {
     var name: String

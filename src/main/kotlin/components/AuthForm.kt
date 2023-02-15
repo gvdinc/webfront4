@@ -1,24 +1,29 @@
 package components
 
-import data.Credentials
+
 import data.AuthState
+import data.Credentials
+import io.ktor.utils.io.errors.*
 import kotlinx.html.InputType
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
 import react.*
-import react.RBuilder
-import react.RProps
 import react.dom.*
+import remote.AuthService
+import remote.dto.RegisterRequest
+import remote.dto.RegisterResponse
 
 external interface AuthFormProps: RProps{
     var login: (Credentials) -> Unit
 }
 
+
 val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props ->
     var loginVar: String = ""
     var passVar: String = ""
+    val authService = AuthService.create()
 
     div("auth_form"){
         div("log_div"){
@@ -43,10 +48,12 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
                 }
             }
         }
+
         button {
             + "Login"
             attrs{
-                onClickFunction = { event ->
+                id = "login_button"
+                onClickFunction = {
                     props.login(
                         Credentials(
                         login = loginVar,
@@ -57,12 +64,27 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
                 }
             }
         }
+        button {
+            + "Register"
+            attrs{
+                id = "register_button"
+                onClickFunction = {
+                    val request = RegisterRequest(login = loginVar, password_hash = passVar)
+                    val registerResponse = try{
+                        authService.registerRequest(request)
+                    } catch (e: IOException) {RegisterResponse("failed")}
+                    console.log("registration attempt res: ${registerResponse}")
+                    // TODO : переделать логику регистрации
+                }
+            }
+        }
     }
 }
 
 fun RBuilder.authForm(loginFunc: (Credentials) -> Unit) = child(AuthForm) {
     attrs.login = loginFunc
 }
+
 
 
 

@@ -1,10 +1,8 @@
 package data
 
-import data.AuthState
-
 data class Credentials(
-    var login: String = "s",
-    var password: String = "s",
+    var login: String = "",
+    var password: String = "",
     var state: AuthState = AuthState.UNAUTHORIZED
 ) {
     override fun toString(): String {

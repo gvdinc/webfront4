@@ -1,8 +1,12 @@
-import components.*
+import components.authForm
+import components.myHeader
 import data.AuthState
 import data.Credentials
 import data.HeaderData
-import react.*
+import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
 import react.dom.p
 
 
@@ -16,6 +20,7 @@ data class AuthorizationState(val authState: AuthState = AuthState.UNAUTHORIZED)
 
 class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
 
+
     init {
         state = AuthorizationState(props.credentials.state)
     }
@@ -25,27 +30,50 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
         myHeader()
         p{+ state.authState.toString()}
         if (state.authState == AuthState.UNAUTHORIZED){
-            authForm(::resetStatus)
+            authForm(::authFormUpdate)
         }
         else{
-
+            child(Panel::class){
+                attrs.exitFunction = (::authExit)
+            }
         }
     }
 
-    private fun resetStatus(credentials: Credentials){
+    private fun authExit(){
+        credentialsUpdate(null)
+        stateUpdate()
+        console.log("user logged out")
+    }
+
+    private fun authFormUpdate(credentials: Credentials){
         if (credentials.state == AuthState.AUTHORIZED) {
             console.log("user successfully authorised ${credentials.login}, " +
-                    credentials.password//  .replace(regex = Regex("."), replacement = "*")
+                    credentials.password.replace(regex = Regex("."), replacement = "*")
             )
-            props.credentials.login = credentials.login
-            props.credentials.password = credentials.password
-            props.credentials.state = credentials.state
+            credentialsUpdate(credentials)
         }
         else{
             console.log("authorisation failed")
         }
+        stateUpdate()
+    }
+
+    private fun stateUpdate(){
         setState(AuthorizationState(authState = props.credentials.state))
     }
 
+    private fun credentialsUpdate(newCred: Credentials?){
+        if (newCred == null){
+            props.credentials.login = ""
+            props.credentials.password = ""
+            props.credentials.state = AuthState.UNAUTHORIZED
+            stateUpdate()
+        }
+        else{
+            props.credentials.login = newCred.login
+            props.credentials.password = newCred.password
+            props.credentials.state = newCred.state
+        }
+    }
 }
 
