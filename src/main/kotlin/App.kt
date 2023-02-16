@@ -27,7 +27,8 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
 
     override fun RBuilder.render() {
 
-        myHeader()
+        val header = myHeader()
+
         p{+ state.authState.toString()}
         if (state.authState == AuthState.UNAUTHORIZED){
             authForm(::authFormUpdate)
@@ -38,6 +39,7 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
             }
         }
     }
+
 
     private fun authExit(){
         credentialsUpdate(null)

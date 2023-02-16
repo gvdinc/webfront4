@@ -9,6 +9,6 @@ data class ShotsResponse(
     val y: Double,
     val R: Double,
     val hit: Boolean, // true или false
-    val datetime: Date, // в формате ISO 8601
+    val datetime: String, // в формате ISO 8601
     val processing_time: Int, // в наносекундах
 )
