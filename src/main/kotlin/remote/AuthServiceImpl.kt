@@ -17,7 +17,7 @@ class AuthServiceImpl( private val client: HttpClient
             contentType(ContentType.Application.Json)
             setBody(registerRequest)
         }.body()
-        println("resister state is ${response.register_state}")
+        //println("resister state is ${response.register_state}")
         return response
     }
 

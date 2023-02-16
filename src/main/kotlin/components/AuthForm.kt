@@ -4,7 +4,9 @@ package components
 import data.AuthState
 import data.Credentials
 import io.ktor.utils.io.errors.*
+import kotlinx.coroutines.*
 import kotlinx.html.InputType
+import kotlinx.html.blockQuote
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
@@ -24,6 +26,7 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
     var loginVar: String = ""
     var passVar: String = ""
     val authService = AuthService.create()
+    var response: RegisterResponse = RegisterResponse(register_state = "not requested")
 
     div("auth_form"){
         div("log_div"){
@@ -70,10 +73,27 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
                 id = "register_button"
                 onClickFunction = {
                     val request = RegisterRequest(login = loginVar, password_hash = passVar)
-                    val registerResponse = try{
-                        authService.registerRequest(request)
-                    } catch (e: IOException) {RegisterResponse("failed")}
-                    console.log("registration attempt res: ${registerResponse}")
+
+                    var job = CoroutineScope(Dispatchers.Main).launch() {
+                        val resp: RegisterResponse =
+                            try {
+                                var res: RegisterResponse? =
+                                    authService.registerRequest(request)
+                                if (res == null) res = RegisterResponse(register_state = "failed")
+                                res
+                            } catch (e: IOException) {
+                                RegisterResponse(register_state = "failed")
+                            }
+                        console.log("Request finished: response - $resp")
+                        response = resp
+                        if (response.register_state == "registered"){
+                            console.log("registration success: ${response.register_state}")
+                            props.login(Credentials(loginVar, passVar, AuthState.AUTHORIZED))
+                        } else{
+                            console.error("registration failed: ${response.register_state}" )
+                        }
+                    }
+
                     // TODO : переделать логику регистрации
                 }
             }
