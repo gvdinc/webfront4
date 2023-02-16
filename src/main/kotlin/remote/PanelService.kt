@@ -5,18 +5,16 @@ import io.ktor.client.engine.js.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import remote.dto.LoginRequest
-import remote.dto.LoginResponse
-import remote.dto.RegisterRequest
-import remote.dto.RegisterResponse
+import remote.dto.*
 
-interface AuthService {
-    suspend fun registerRequest(registerRequest: RegisterRequest): RegisterResponse
-    suspend fun loginRequest(loginRequest: LoginRequest): LoginResponse
-    // TODO : add  suspend fun logout()
+interface PanelService {
+    suspend fun shot(shotRequest: ShotRequest) : ShotResponse
+
+    suspend fun shots() : ShotsResponse
+
     companion object {
-        fun create(): AuthService{
-            return AuthServiceImpl(
+        fun create(): PanelServiceImpl{
+            return PanelServiceImpl(
                 client = HttpClient(Js) {
                     install(ContentNegotiation) {
                         json(Json {

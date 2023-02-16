@@ -20,7 +20,7 @@ fun main() {
         render(document.getElementById("root")) {
             child(App::class){
                 attrs{
-                    credentials = Credentials(state = AuthState.AUTHORIZED)
+                    credentials = Credentials(state = AuthState.UNAUTHORIZED)
                 }
             }
         }
