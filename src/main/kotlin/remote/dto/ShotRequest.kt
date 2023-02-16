@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ShotRequest(
+    val login: String,
+    val password_hash: String,
     var x: Double? = null,
     var y: Double? = null,
     var R: Double? = null
@@ -17,7 +19,7 @@ data class ShotRequest(
         if (x == null) return "No x coordinate"
         if (y == null) return "No y coordinate"
         return if (R == null) "No R coordinate"
-        else "unclassified mistake" // success
+        else "correct" // success
     }
 
     fun valid(): Boolean{

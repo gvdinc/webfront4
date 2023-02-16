@@ -15,16 +15,9 @@ interface AuthService {
     suspend fun loginRequest(loginRequest: LoginRequest): LoginResponse
     // TODO : add  suspend fun logout()
     companion object {
-        fun create(): AuthService{
+        fun create(httpClient: HttpClient): AuthService{
             return AuthServiceImpl(
-                client = HttpClient(Js) {
-                    install(ContentNegotiation) {
-                        json(Json {
-                            prettyPrint = true
-                            isLenient = true
-                        })
-                    }
-                }
+                client = httpClient
             )
         }
     }

@@ -10,19 +10,12 @@ import remote.dto.*
 interface PanelService {
     suspend fun shot(shotRequest: ShotRequest) : ShotResponse
 
-    suspend fun shots() : ShotsResponse
+    suspend fun shots(shotsRequest: ShotsRequest) : ShotsResponse
 
     companion object {
-        fun create(): PanelServiceImpl{
+        fun create(httpClient: HttpClient): PanelServiceImpl{
             return PanelServiceImpl(
-                client = HttpClient(Js) {
-                    install(ContentNegotiation) {
-                        json(Json {
-                            prettyPrint = true
-                            isLenient = true
-                        })
-                    }
-                }
+                client = httpClient
             )
         }
     }

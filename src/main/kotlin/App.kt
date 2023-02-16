@@ -3,12 +3,16 @@ import components.myHeader
 import data.AuthState
 import data.Credentials
 import data.HeaderData
+import io.ktor.client.*
+import io.ktor.client.engine.js.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.p
-
 
 external interface AppProps : RProps{
     var credentials: Credentials
@@ -19,7 +23,14 @@ data class AuthorizationState(val authState: AuthState = AuthState.UNAUTHORIZED)
 
 
 class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
-
+    private val client = HttpClient(Js) {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+            })
+        }
+    }
 
     init {
         state = AuthorizationState(props.credentials.state)
@@ -31,11 +42,14 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
 
         p{+ state.authState.toString()}
         if (state.authState == AuthState.UNAUTHORIZED){
-            authForm(::authFormUpdate)
+            authForm(::authFormUpdate, client)
         }
         else{
             child(Panel::class){
                 attrs.exitFunction = (::authExit)
+                attrs.credentials = props.credentials
+                attrs.httpClient = client
+                // TODO: check if reenter works correctly
             }
         }
     }

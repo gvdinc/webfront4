@@ -5,6 +5,11 @@ import kotlin.js.Date
 
 @Serializable
 data class ShotsResponse(
+    var mass: List<ShotsResponseElement>?
+)
+
+@Serializable
+data class ShotsResponseElement(
     val x: Double,
     val y: Double,
     val R: Double,

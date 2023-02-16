@@ -3,6 +3,7 @@ package components
 
 import data.AuthState
 import data.Credentials
+import io.ktor.client.*
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.*
 import kotlinx.html.InputType
@@ -20,13 +21,14 @@ import remote.dto.RegisterResponse
 
 external interface AuthFormProps: RProps{
     var login: (Credentials) -> Unit
+    var httpClient: HttpClient
 }
 
 
 val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props ->
     var loginVar: String = ""
     var passVar: String = ""
-    val authService = AuthService.create()
+    val authService = AuthService.create(props.httpClient)
     var regResponse: RegisterResponse = RegisterResponse(register_state = "not requested")
     var loginResponse: LoginResponse = LoginResponse(login_state = "not requested")
 
@@ -61,7 +63,7 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
                 onClickFunction = {
                     val request = LoginRequest(login = loginVar, password_hash = passVar)
 
-                    var job = CoroutineScope(Dispatchers.Main).launch() {
+                    var job = CoroutineScope(Dispatchers.Main).launch {
                         val resp: LoginResponse =
                             try {
                                 val res: LoginResponse =
@@ -83,8 +85,6 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
                         } else {
                             console.error("unknown error during login request")}
                     }
-
-                    // TODO : переделать логику входа
                 }
             }
         }
@@ -114,16 +114,15 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
                             console.error("registration failed: $regResponse" )
                         }
                     }
-
-                    // TODO : переделать логику регистрации
                 }
             }
         }
     }
 }
 
-fun RBuilder.authForm(loginFunc: (Credentials) -> Unit) = child(AuthForm) {
+fun RBuilder.authForm(loginFunc: (Credentials) -> Unit, client: HttpClient) = child(AuthForm) {
     attrs.login = loginFunc
+    attrs.httpClient = client
 }
 
 

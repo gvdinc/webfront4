@@ -60,6 +60,5 @@ class InputsBlock(props: InputsBlockProps): RComponent<InputsBlockProps, InputSt
         p{
            + "x:${state.coords.x} y:${state.coords.y} R:${state.coords.R}"
         }
-        //TODO("Not yet implemented")
     }
 }
