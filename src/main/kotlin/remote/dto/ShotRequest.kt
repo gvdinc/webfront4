@@ -1,7 +1,6 @@
 package remote.dto
 
 import kotlinx.serialization.Serializable
-import org.khronos.webgl.Int16Array
 
 @Serializable
 data class ShotRequest(

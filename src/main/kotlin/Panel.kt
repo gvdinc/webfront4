@@ -50,15 +50,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
 
         
         div("panel_wrapper") {
-            button(classes = "user_escape") {
-                +"exit"
-                attrs {
-                    onClickFunction = {
-                        props.exitFunction()
-                    }
-                }
-            }
-            
+
             div("display_wrapper") {
 
                 val testArr: List<ShotsResponseElement> = listOf(
@@ -67,7 +59,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                     ShotsResponseElement(-2.0, -4.0, 8.0, true, "", 16)
                 )
 
-                div("display") {
+                div("panel") {
                     val myWidth = 200.0
                     mySVG(myWidth, 20.0, state.shotList)
                     //attrs.onClickFunction
@@ -100,10 +92,11 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                 }
 
 
-                div("input_block") {
+                div("Block") {
                     p { +state.coords.findMistakes().toString(); style("color: red;") }
                     input(classes = "inputs_x", name = "x_input") {
                         attrs {
+                            placeholder = "X"
                             onChangeFunction = { event ->
                                 props.coordinates.x =
                                     try {
@@ -118,6 +111,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                     }
                     input(classes = "inputs_y", name = "y_input") {
                         attrs {
+                            placeholder = "Y"
                             onChangeFunction = { event ->
                                 props.coordinates.y =
                                     try {
@@ -132,6 +126,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                     }
                     input(classes = "inputs_R") {
                         attrs {
+                            placeholder = "R"
                             onChangeFunction = { event ->
                                 props.coordinates.R =
                                     try {
@@ -151,6 +146,14 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                         if (state.coords.valid()) shotRequestPOST(state.coords)
                     }
                 }
+                button(classes = "user_escape") {
+                    +"exit"
+                    attrs {
+                        onClickFunction = {
+                            props.exitFunction()
+                        }
+                    }
+                }
                 p {
                     +"x:${state.coords.x} y:${state.coords.y} R:${state.coords.R}"
                 }
@@ -162,12 +165,12 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                 table {
                     thead {
                         tr("table_head") {
-                            th { +"Дата (Д Ч:М:С)" }
-                            th { +"Время выполнения (ns)" }
-                            th { +"В области?" }
-                            th { +"Координата X" }
-                            th { +"Координата Y" }
-                            th { +"Масштаб (R)" }
+                            th { +"Date" }
+                            th { +"compilation time (ns)" }
+                            th { +"Hit?" }
+                            th { +"X" }
+                            th { +"Y" }
+                            th { +"Scale(R)" }
                         }
                     }
                     tbody {

@@ -1,11 +1,10 @@
 package remote
 
 import io.ktor.client.*
-import io.ktor.client.engine.js.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
-import remote.dto.*
+import remote.dto.ShotRequest
+import remote.dto.ShotResponse
+import remote.dto.ShotsRequest
+import remote.dto.ShotsResponse
 
 interface PanelService {
     suspend fun shot(shotRequest: ShotRequest) : ShotResponse

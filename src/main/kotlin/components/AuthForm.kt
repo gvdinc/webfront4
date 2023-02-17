@@ -5,7 +5,9 @@ import data.AuthState
 import data.Credentials
 import io.ktor.client.*
 import io.ktor.utils.io.errors.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.html.InputType
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction

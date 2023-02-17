@@ -1,7 +1,6 @@
 package remote.dto
 
 import kotlinx.serialization.Serializable
-import kotlin.js.Date
 
 @Serializable
 data class ShotsResponse(

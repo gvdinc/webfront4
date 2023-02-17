@@ -2,7 +2,6 @@ import components.authForm
 import components.myHeader
 import data.AuthState
 import data.Credentials
-import data.HeaderData
 import io.ktor.client.*
 import io.ktor.client.engine.js.*
 import io.ktor.client.plugins.contentnegotiation.*

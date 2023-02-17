@@ -1,10 +1,12 @@
 package components
 
 import kotlinx.html.HTMLTag
-import react.*
-import react.dom.*
+import react.RBuilder
+import react.ReactElement
+import react.dom.RDOMBuilder
+import react.dom.svg
+import react.dom.tag
 import remote.dto.ShotsResponseElement
-import kotlin.math.sin
 
 // a custom tag builder, reuses the tag(...) function from kotlin-react and HTMLTag from kotlinx.html
 inline fun RBuilder.custom(tagName: String, block: RDOMBuilder<HTMLTag>.() -> Unit): ReactElement = tag(block) {
@@ -67,5 +69,7 @@ fun RBuilder.mySVG(width: Double, R: Double, mass: List<ShotsResponseElement>? =
 
             }
         }
+
+
     }
 }
