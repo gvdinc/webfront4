@@ -13,10 +13,10 @@ import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.p
+import remote.dto.ShotRequest
 
 external interface AppProps : RProps{
     var credentials: Credentials
-    val headerData: HeaderData
 }
 
 data class AuthorizationState(val authState: AuthState = AuthState.UNAUTHORIZED) : RState
@@ -38,7 +38,7 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
 
     override fun RBuilder.render() {
 
-        val header = myHeader()
+        myHeader()
 
         p{+ state.authState.toString()}
         if (state.authState == AuthState.UNAUTHORIZED){
@@ -49,6 +49,7 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
                 attrs.exitFunction = (::authExit)
                 attrs.credentials = props.credentials
                 attrs.httpClient = client
+                attrs.coordinates = ShotRequest(props.credentials.login, props.credentials.password)
                 // TODO: check if reenter works correctly
             }
         }

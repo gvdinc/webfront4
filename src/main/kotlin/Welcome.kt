@@ -38,7 +38,5 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                 }
             }
         }
-
-
     }
 }
