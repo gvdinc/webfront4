@@ -25,7 +25,7 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
     override fun RBuilder.render() {
         div {
             + "This is ${state.name}'s site"
-            +"Reverse is ${state.name.reversed().lowercase()}"
+            + "Reverse is ${state.name.reversed().lowercase()}"
         }
         input {
             attrs {

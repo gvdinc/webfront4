@@ -1,12 +1,22 @@
 import components.InputsBlock
+import components.mySVG
 import data.Credentials
 import data.PanelStateOptions
 import io.ktor.client.*
 import io.ktor.utils.io.errors.*
+import kotlinext.js.getOwnPropertyNames
+import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.html.*
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onMouseMoveFunction
+import org.w3c.dom.HTMLBodyElement
+import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.MouseEvent
+import org.w3c.dom.get
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -26,7 +36,6 @@ data class PanelState(var panelState: PanelStateOptions, var shotArray: List<Sho
 
 class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
     private val panelService: PanelService = PanelService.create(props.httpClient)
-
     init {
         state = PanelState(PanelStateOptions.NOT_REQUESTED, null)
     }
@@ -45,10 +54,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
             }
 
             div("dashboard") {
-                div("display") {
-                    //svg()
-                }
-                child(InputsBlock::class) {
+                val inputs = child(InputsBlock::class) {
                     attrs.coordinates = ShotRequest(props.credentials.login, props.credentials.password)
                     attrs.requestFunction = (::shotRequestPOST)
                 }
@@ -56,27 +62,30 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
             div("datatable") {
 
                 table {
-                    tr("table_head"){
-                        th{+ "Дата (Д Ч:М:С)"}
-                        th{+ "Время выполнения (ns)"}
-                        th{+ "В области?"}
-                        th{+ "Координата X"}
-                        th{+ "Координата Y"}
-                        th{+ "Масштаб (R)"}
-                    }
-
-                    //for start
-                    if (state.shotArray != null) {
-                        for (shot in state.shotArray!!) {
-                            th { +shot.datetime }
-                            th { +shot.processing_time.toString() }
-                            th { +shot.hit.toString() }
-                            th { +shot.x.toString() }
-                            th { +shot.y.toString() }
-                            th { +shot.R.toString() }
+                    thead {
+                        tr("table_head") {
+                            th { +"Дата (Д Ч:М:С)" }
+                            th { +"Время выполнения (ns)" }
+                            th { +"В области?" }
+                            th { +"Координата X" }
+                            th { +"Координата Y" }
+                            th { +"Масштаб (R)" }
                         }
                     }
-                    //for end
+                    tbody {
+                        //for start
+                        if (state.shotArray != null) {
+                            for (shot in state.shotArray!!) {
+                                th { +shot.datetime }
+                                th { +shot.processing_time.toString() }
+                                th { +shot.hit.toString() }
+                                th { +shot.x.toString() }
+                                th { +shot.y.toString() }
+                                th { +shot.R.toString() }
+                            }
+                        }
+                        //for end
+                    }
                 }
                 // request button
                 button { + "Загрузить историю"
@@ -86,6 +95,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                 }
             }
         }
+
     }
 
     private fun logoutPOST() {
@@ -125,6 +135,4 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
         }
         // TODO : вызов ф-ции для отображения точек на дисплее
     }
-
 }
-

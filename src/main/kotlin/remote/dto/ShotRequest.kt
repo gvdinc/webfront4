@@ -1,6 +1,7 @@
 package remote.dto
 
 import kotlinx.serialization.Serializable
+import org.khronos.webgl.Int16Array
 
 @Serializable
 data class ShotRequest(
@@ -9,7 +10,6 @@ data class ShotRequest(
     var x: Double? = null,
     var y: Double? = null,
     var R: Double? = null
-
 ) {
     override fun toString(): String {
         return "ShotRequest(x=$x, y=$y, R=$R)"

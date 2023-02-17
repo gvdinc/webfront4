@@ -22,3 +22,31 @@ body{
   background-color: #a8a8a8;
 }
 
+div{
+  display: inline-block;
+}
+
+.display{
+  margin: 10px;
+  width: 200px;
+  height: 200px;
+  svg{
+    .axis_line{
+      stroke: #000000;
+      stroke-width: 1%;
+      stroke-linecap: butt;
+    }
+
+    .point{
+      stroke: white;
+      .point_hit{
+        //stroke: #00abdf;
+        fill: #0023c7;
+      }
+      .point_missed{
+        //stroke: #b40000;
+        fill: #b40000;
+      }
+    }
+  }
+}
