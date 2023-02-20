@@ -15,10 +15,11 @@ data class ShotRequest(
     }
 
     fun findMistakes(): String{
+        if (R == null) return "No R coordinate"
         if (x == null) return "No x coordinate"
-        if (y == null) return "No y coordinate"
-        return if (R == null) "No R coordinate"
-        else "correct" // success
+        else if (y == null) return "No y coordinate"
+        else if (R!! <= -5.0 || R!! >= 3.0) return "incorrect R"
+        else return "correct" // success
     }
 
     fun valid(): Boolean{

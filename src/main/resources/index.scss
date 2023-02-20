@@ -53,6 +53,7 @@ div{
 $toy_img_wall4K: url("./imgs/toy_story_wall4K.jpg");
 $toy_img_wall: url("./imgs/toy_story_wallHD.jpg");
 $toy_img_footer: url("./imgs/toy_story_floor.jpg") center 100% no-repeat;
+$zad_img: url("./imgs/img.png");
 //fonts
 @font-face {
   font-family: toy_font_large;
@@ -250,7 +251,7 @@ input, select {
     }
   }
 
-  background-color: #eeeeee;
+  background: $zad_img;
   .Image{
     border-radius: 20px 20px 20px 20px;
   }

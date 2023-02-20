@@ -4,15 +4,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ShotsResponse(
-    var mass: List<ShotsResponseElement>?
+    var shots: List<ShotsResponseElement>?
 )
 
 @Serializable
 data class ShotsResponseElement(
+    val datetime: String, // в формате ISO 8601
     val x: Double,
     val y: Double,
     val R: Double,
     val hit: Boolean, // true или false
-    val datetime: String, // в формате ISO 8601
-    val processing_time: Int, // в наносекундах
+    val processing_time_nano: Int, // в наносекундах
 )

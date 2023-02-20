@@ -54,14 +54,14 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
             div("display_wrapper") {
 
                 val testArr: List<ShotsResponseElement> = listOf(
-                    ShotsResponseElement(1.0, 2.0, 3.0, true, "", 12),
-                    ShotsResponseElement(0.2, 0.0, 1.0, false, "", 122),
-                    ShotsResponseElement(-2.0, -4.0, 8.0, true, "", 16)
+                    ShotsResponseElement(x=1.0, y=2.0, R=3.0, hit = true, datetime = "", processing_time_nano = 12),
+                    ShotsResponseElement(x=0.2, y=0.0, R=1.0, hit = false, datetime = "", processing_time_nano = 122),
+                    ShotsResponseElement(x=-2.0, y=-4.0, R=8.0, hit = true, datetime = "", processing_time_nano = 16)
                 )
 
                 div("panel") {
                     val myWidth = 200.0
-                    mySVG(myWidth, 20.0, state.shotList)
+                    mySVG(myWidth, 5.0, state.shotList)
                     //attrs.onClickFunction
                     attrs {
                         id = "svg_div"
@@ -82,8 +82,8 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                             var x = 2
                             var y = 1.5
                             if (props.coordinates.R != null){
-                                props.coordinates.x = round((Random.nextDouble()*10 - 5)*10) / 10
-                                props.coordinates.y = round((Random.nextDouble()*10 - 5)*10) / 10
+                                props.coordinates.x = round((Random.nextDouble()* props.coordinates.R!! *2 - props.coordinates.R!!)*10) / 10
+                                props.coordinates.y = round((Random.nextDouble()* props.coordinates.R!! *2 - props.coordinates.R!!)*10) / 10
                                 setState(PanelState(state.panelState, props.coordinates, state.shotList))
                             }
 
@@ -161,7 +161,12 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
             
 
             div("datatable") {
-
+                // request button
+                button { + "Загрузить историю"
+                    attrs.onClickFunction = {shotsTablePOST(shotsRequest = ShotsRequest(
+                        props.credentials.login, props.credentials.password
+                    ))}
+                }
                 table {
                     thead {
                         tr("table_head") {
@@ -177,23 +182,20 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                         //for start
                         if (state.shotList != null) {
                             for (shot in state.shotList!!) {
-                                th { +shot.datetime }
-                                th { +shot.processing_time.toString() }
-                                th { +shot.hit.toString() }
-                                th { +shot.x.toString() }
-                                th { +shot.y.toString() }
-                                th { +shot.R.toString() }
+                                tr {
+                                    th { +shot.datetime }
+                                    th { +shot.processing_time_nano.toString() }
+                                    th { +shot.hit.toString() }
+                                    th { +shot.x.toString() }
+                                    th { +shot.y.toString() }
+                                    th { +shot.R.toString() }
+                                }
                             }
                         }
                         //for end
                     }
                 }
-                // request button
-                button { + "Загрузить историю"
-                    attrs.onClickFunction = {shotsTablePOST(shotsRequest = ShotsRequest(
-                        props.credentials.login, props.credentials.password
-                    ))}
-                }
+
             }
         }
 
@@ -223,8 +225,8 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
         var job = CoroutineScope(Dispatchers.Main).launch {
             try {
                 val response: ShotsResponse = panelService.shots(shotsRequest)
-                if (response.mass != null && response.mass?.isNotEmpty() == true) {
-                    setState(PanelState(panelState = PanelStateOptions.TABLE_LOADED, state.coords, response.mass))
+                if (response.shots != null && response.shots?.isNotEmpty() == true) {
+                    setState(PanelState(panelState = PanelStateOptions.TABLE_LOADED, state.coords, response.shots))
                 }
                 else{
                     setState(PanelState(panelState = PanelStateOptions.TABLE_FAILED, state.coords,null))
