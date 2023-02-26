@@ -10,17 +10,17 @@ import remote.dto.ShotsResponseElement
 
 // a custom tag builder, reuses the tag(...) function from kotlin-react and HTMLTag from kotlinx.html
 inline fun RBuilder.custom(tagName: String, block: RDOMBuilder<HTMLTag>.() -> Unit): ReactElement = tag(block) {
-    HTMLTag(tagName, it, mapOf(), null, inlineTag = true, emptyTag = false) // I dont know yet what the last 3 params mean... to lazy to look it up
+    HTMLTag(tagName, it, mapOf(), null, inlineTag = true, emptyTag = false) // I don't know yet what the last 3 params mean... to lazy to look it up
 }
 
 // example use
-fun RBuilder.mySVG(width: Double, R: Double, mass: List<ShotsResponseElement>? = null) {
+fun RBuilder.mySVG(R: Double, mass: List<ShotsResponseElement>? = null) {
     val pointHitColor = "#0023c7"
     val pointMissedColor = "#b40000"
 
     svg(classes = "svg_img") {
-        attrs["width"] = width
-        attrs["height"] = width
+        attrs["width"] = 200.0
+        attrs["height"] = 200.0
         attrs["viewBox"] = "0 0 ${2*R} ${2*R}"
 
         // axis

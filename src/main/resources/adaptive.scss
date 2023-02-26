@@ -1,0 +1,321 @@
+//src
+$toy_img_wall4K: url("./imgs/toy_story_wall4K.jpg");
+$toy_img_wall: url("./imgs/toy_story_wallHD.jpg");
+$toy_img_footer: url("./imgs/toy_story_floor.jpg") center 100% no-repeat;
+$zad_img: url("./imgs/img.png");
+$area_img: url("./imgs/custom.png");
+//fonts
+@font-face {
+  font-family: toy_font_large;
+  src: url(./fonts/AGENTRED.TTF);
+}
+@font-face {
+  font-family: toy_font;
+  src: url(./fonts/PeaceSansWebfont.ttf);
+}
+@mixin set_font($font_name: toy_font, $size: 1em, $color: $color_toy_deep_blue){
+  font-family: $font_name, serif;
+  font-size: $size;
+  color: $color;
+}
+@mixin toy_border($_size: 4px, $_color: $gradient_toy_blue){
+  border: $_size solid $_color;
+  @if ($_color == $gradient_toy_blue){border: $_size solid $color_toy_deep_blue; border-image: $gradient_toy_blue;}
+}
+@mixin background_wall($_4K: 0){
+  background-color: $color_toy_blue;
+  @if ( $_4K > 0 ){background-image: $toy_img_wall4K;}
+  @else {background-image: $toy_img_wall;}
+  background-repeat: repeat-y;
+  background-attachment: fixed;
+  background-position: bottom;
+  background-origin: initial;
+  background-size: cover;
+}
+//colors
+$color_toy_blue: rgb(117, 192, 224);
+$color_toy_red: rgb(196, 36, 48);
+$color_toy_yellow: rgb(247, 212, 68);
+$color_toy_deep_blue: rgb(1, 61, 123);
+$gradient_toy_blue: linear-gradient(45deg, $color_toy_deep_blue, rgb(0, 255, 215)) 1;
+//params
+$m_desk: "min-width: 1215px";
+$m_tablet: "(min-width: 655px) and (max-width: 1214px)";
+$m_mobile: "max-width: 654px";
+
+
+body{ // global container
+  top: 0;
+  left: 0;
+
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  @include set_font();
+  @media ($m_desk) {
+    @include background_wall(1);
+  }
+  @media ($m_tablet) {
+    @include background_wall(0)
+  }
+  @media ($m_mobile) {
+    @include background_wall(0)
+  }
+}
+
+// root
+#root {
+  position: relative;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+}
+
+header{
+  position: relative;
+  display: inline-flex;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 2em;
+  @include set_font(toy_font_large, 1em);
+  background-color: $color_toy_yellow;
+
+  @media ($m_desk) {
+    .header__logo{
+      display: flex;
+      flex-wrap: revert;
+      justify-content: space-between;
+      margin-left: auto;
+      margin-right: auto;
+      div{
+        width: auto;
+        height: auto;
+        padding: 0 2% 0 2%;
+        margin: 0;
+        p{
+          margin: 0 0 0 0;
+        }
+      }
+    }
+  }
+  @media ($m_tablet){
+    .header__logo{
+      display: none;
+    }
+  }
+  @media ($m_mobile) {
+    flex-wrap: wrap;
+    height: auto;
+    .header__logo{
+      display: none;
+    }
+  }
+  p{
+    margin: 0;
+    padding: 0.1em 1em 0;
+  }
+  img{
+    height: 100%;
+    padding: 0 2% 0 2%;
+  }
+} // adaptive
+
+.content_wrapper{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  background-color: transparent;
+
+  .panel_wrapper{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    padding: 2% 1% 2% 1%; // T R B L
+
+    p{
+      margin: 0;
+      text-align: center;
+    }
+    .display_wrapper{
+      background-color: transparent;
+      svg{
+        margin-bottom: 20px;
+        width: 20em;
+        height: 20em;
+        background: $area_img no-repeat;
+        background-size: 100%;
+      }
+    }
+    .Block{
+      display: flex;
+      flex-direction: column;
+    }
+    // panel_wrapper
+    @media ($m_desk){
+      @include set_font(toy_font,30px);
+      .display{
+        display: flex;
+        justify-content: center;
+        svg{
+          max-width: 400px;
+          max-height: 400px;
+        }
+      }
+      .Block{
+        flex-direction: row;
+        flex-wrap: inherit;
+        justify-content: left;
+        input{
+          width: 200px - 8px;
+          max-width: 200px - 16px;
+          margin-bottom: 2px;
+          font-size: 1em;
+          @include toy_border(6px)
+        }
+      }
+      .buttons{
+        margin-top: 2%;
+        display: flex;
+        justify-content: space-around;
+      }
+    }
+    @media ($m_tablet) {
+      width: 100%;
+      padding: 5% 0 5% 0;
+      .display {
+        display: flex;
+        justify-content: center;
+      }
+      .Block{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        input{
+          max-width: 90vw;
+          margin-bottom: 2px;
+          font-size: 1.5em;
+          @include toy_border(6px)
+        }
+      }
+      .buttons{
+        margin-top: 2%;
+        display: flex;
+        justify-content: space-around;
+      }
+    }
+    @media ($m_mobile) {
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0;
+      .display {
+        position: relative;
+        svg {
+          max-width: 100%;
+          height: auto;
+        }
+        } // TODO: check
+      }
+    .Block{
+        display: flex;
+        justify-content: space-between;
+        input{
+          max-width: 92vw;
+          margin-bottom: 2px;
+          font-size: 30px;
+          @include toy_border(6px)
+        }
+    }
+    .buttons:first-child{
+      left: 0;
+    }
+    .buttons:last-child{
+      right: 0;
+    }
+
+  }
+  // content_wrapper
+  @media ($m_tablet) {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    @include set_font(toy_font, 30px)
+  }
+  @media ($m_mobile) {
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    @include set_font(toy_font, 30px)
+  }
+  // datatable
+  .datatable{
+    position: relative;
+    display: block;
+    button{
+      margin: 0 auto;
+    }
+    table{
+      thead{
+        @include set_font(toy_font_large, 20px)
+      }
+    }
+    @media ($m_mobile) {
+      @include set_font(toy_font, 20px)
+    }
+  }
+
+  .auth_form{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    margin-top: 30vh;
+    @media ($m_desk) {
+      @include set_font(toy_font, 30px)
+    }
+    .log_div, .pass_div{
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0.5em;
+      @media ($m_desk) {
+        input{@include set_font(toy_font, 30px)}
+      }
+      @media ($m_tablet) {
+        input{@include set_font(toy_font, 30px)}
+      }
+      @media ($m_mobile) {
+        input{
+          @include set_font(toy_font, 20px);
+          max-width: 90vw;
+        }
+      }
+    }
+    button{
+      margin-bottom: 0.5em;
+    }
+  }
+}
+
+input, select {
+  background-color: $color_toy_yellow;
+  font-size: 15px;
+  font-family: toy_font, serif;
+  color: $color_toy_deep_blue;
+  @include toy_border()
+}
+
+button{
+  @include toy_border($_color: $color_toy_yellow);
+  @include set_font(toy_font, 30px, $color_toy_yellow);
+  background-color: $color_toy_red;
+
+  .btn:active {
+    transform: translateY(4px);
+    /* Moving button 4px to y-axis */
+  }
+}

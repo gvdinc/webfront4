@@ -1,6 +1,7 @@
 package components
 
 import data.HeaderData
+import kotlinx.html.id
 import react.*
 import react.dom.div
 import react.dom.header
@@ -15,12 +16,16 @@ external interface HeaderProps : RProps{
 
 val Header: FunctionalComponent<HeaderProps> = functionalComponent { props ->
     header("header"){
+        attrs.id = "header"
         div("header__logo"){
             img{
                 attrs.src = URLS.HEADER_LOGO_URL_KT
             }
             img{
                 attrs.src = URLS.HEADER_LOGO_URL_SPRING
+            }
+            img{
+                attrs.src = URLS.TOY_STORY_LOGO
             }
         }
         div("header__fio"){

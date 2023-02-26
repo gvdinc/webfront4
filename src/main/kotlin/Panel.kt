@@ -3,6 +3,7 @@ import data.Credentials
 import data.PanelStateOptions
 import io.ktor.client.*
 import io.ktor.utils.io.errors.*
+import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +22,11 @@ import remote.dto.*
 import kotlin.math.round
 import kotlin.random.Random
 
+val testArr: List<ShotsResponseElement> = listOf(
+    ShotsResponseElement(x=1.0, y=2.0, R=3.0, hit = true, datetime = "2023-02-16 19:56:58.129000", processing_time_nano = 16600),
+    ShotsResponseElement(x=0.2, y=0.0, R=1.0, hit = false, datetime = "2023-02-16 20:07:14.952000", processing_time_nano = 4100),
+    ShotsResponseElement(x=-2.0, y=-4.0, R=8.0, hit = true, datetime = "2023-02-17 09:14:10.019000", processing_time_nano = 16800)
+)
 
 external interface PanelProps: RProps{
     var exitFunction : () -> Unit
@@ -32,7 +38,8 @@ external interface PanelProps: RProps{
 data class PanelState(
     var panelState: PanelStateOptions,
     val coords: ShotRequest,
-    var shotList: List<ShotsResponseElement>? = null
+    var shotList: List<ShotsResponseElement>? = null,
+    var displaySize: Double = window.innerWidth.toDouble()
 ) : RState
 
 class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
@@ -46,27 +53,17 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
     }
 
     override fun RBuilder.render() {
-        style("background-color: ${state.panelState.color}")
-
-        
         div("panel_wrapper") {
 
             div("display_wrapper") {
-
-                val testArr: List<ShotsResponseElement> = listOf(
-                    ShotsResponseElement(x=1.0, y=2.0, R=3.0, hit = true, datetime = "", processing_time_nano = 12),
-                    ShotsResponseElement(x=0.2, y=0.0, R=1.0, hit = false, datetime = "", processing_time_nano = 122),
-                    ShotsResponseElement(x=-2.0, y=-4.0, R=8.0, hit = true, datetime = "", processing_time_nano = 16)
-                )
-
-                div("panel") {
-                    val myWidth = 200.0
-                    mySVG(myWidth, 5.0, state.shotList)
+                div("display") {
+                    mySVG(5.0, state.shotList)
                     //attrs.onClickFunction
                     attrs {
                         id = "svg_div"
                         onClickFunction = { event ->
                             console.log(event)
+                            //val shit = event.
                             val posLeft = (event.currentTarget as HTMLDivElement).offsetLeft
                             val posTop = (event.currentTarget as HTMLDivElement).offsetTop
                             val width = (event.currentTarget as HTMLDivElement).offsetWidth
@@ -89,11 +86,11 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
 
                         }
                     }
+
                 }
 
-
+                p { +state.coords.findMistakes().toString() }
                 div("Block") {
-                    p { +state.coords.findMistakes().toString(); style("color: red;") }
                     input(classes = "inputs_x", name = "x_input") {
                         attrs {
                             placeholder = "X"
@@ -140,17 +137,19 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                         }
                     }
                 }
-                button(classes = "shot_button") {
-                    +"Отправить"
-                    attrs.onClickFunction = {
-                        if (state.coords.valid()) shotRequestPOST(state.coords)
+                div("buttons") {
+                    button(classes = "shot_button") {
+                        +"Отправить"
+                        attrs.onClickFunction = {
+                            if (state.coords.valid()) shotRequestPOST(state.coords)
+                        }
                     }
-                }
-                button(classes = "user_escape") {
-                    +"exit"
-                    attrs {
-                        onClickFunction = {
-                            props.exitFunction()
+                    button(classes = "user_escape") {
+                        +"exit"
+                        attrs {
+                            onClickFunction = {
+                                props.exitFunction()
+                            }
                         }
                     }
                 }
@@ -166,16 +165,17 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                     attrs.onClickFunction = {shotsTablePOST(shotsRequest = ShotsRequest(
                         props.credentials.login, props.credentials.password
                     ))}
+                    //setState(PanelState(state.panelState, props.coordinates, testArr)) // for testing
                 }
                 table {
                     thead {
                         tr("table_head") {
-                            th { +"Date" }
-                            th { +"compilation time (ns)" }
-                            th { +"Hit?" }
+                            th { +"\uD83D\uDCC5" }
+                            th { +"⌚" }
+                            th { +"\uD83C\uDFAF" }
                             th { +"X" }
                             th { +"Y" }
-                            th { +"Scale(R)" }
+                            th { +"R" }
                         }
                     }
                     tbody {
@@ -183,9 +183,9 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                         if (state.shotList != null) {
                             for (shot in state.shotList!!) {
                                 tr {
-                                    th { +shot.datetime }
-                                    th { +shot.processing_time_nano.toString() }
-                                    th { +shot.hit.toString() }
+                                    th { + regFormat(shot.datetime) }
+                                    th { +( shot.processing_time_nano / 100).toString() }
+                                    th { +shotHitSymbol(shot.hit) }
                                     th { +shot.x.toString() }
                                     th { +shot.y.toString() }
                                     th { +shot.R.toString() }
@@ -198,7 +198,17 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
 
             }
         }
+    }
 
+    private fun shotHitSymbol(hit: Boolean): String {
+        return if (hit) "✅" else "❎" /*❌*/
+    }
+
+    private fun regFormat(datetime: String): String {
+        val regEx = Regex(".*(?=:)")
+        val formatted: MatchResult? = regEx.find(datetime.replace('-','.'))
+        console.log("formatted to ${formatted?.value?.toString() ?: ""}")
+        return formatted?.value?.toString() ?: ""
     }
 
     private fun logoutPOST() {
@@ -236,6 +246,5 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                 setState(PanelState(panelState = PanelStateOptions.TABLE_FAILED, state.coords,null))
             }
         }
-        // TODO : вызов ф-ции для отображения точек на дисплее
     }
 }

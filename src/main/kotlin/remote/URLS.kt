@@ -13,6 +13,9 @@ object URLS {
     const val SHOT = "$serverUrl/shot"
     const val SHOTS = "$serverUrl/shots"
 
+    // images
+    const val TOY_STORY_LOGO =
+        "https://vignette.wikia.nocookie.net/logopedia/images/4/4e/Toy_story_logo_horizontal_by_framerater-d9bl9ow.png/revision/latest?cb=20161227115201"
     const val HEADER_LOGO_URL_KT = 
         "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Kotlin_logo.svg/2560px-Kotlin_logo.svg.png"
     const val HEADER_LOGO_URL_SPRING = 

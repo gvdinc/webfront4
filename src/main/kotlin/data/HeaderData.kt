@@ -1,7 +1,7 @@
 package data
 
 data class HeaderData(
-    val student: String = "Гребёнкин Вадим Дмитриевич",
+    val student: String = "Grebenkin Vadim",
     val group: String = "P32101",
     val variant: String = "331"
 )
