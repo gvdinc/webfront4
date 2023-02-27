@@ -9,7 +9,6 @@ import remote.dto.RegisterResponse
 interface AuthService {
     suspend fun registerRequest(registerRequest: RegisterRequest): RegisterResponse
     suspend fun loginRequest(loginRequest: LoginRequest): LoginResponse
-    // TODO : add  suspend fun logout()
     companion object {
         fun create(httpClient: HttpClient): AuthService{
             return AuthServiceImpl(

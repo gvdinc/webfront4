@@ -127,14 +127,13 @@ header img {
   padding: 2% 1% 2% 1%;
 }
 .content_wrapper .panel_wrapper p {
-  margin: 0;
+  margin: 20px 0 0 0;
   text-align: center;
 }
 .content_wrapper .panel_wrapper .display_wrapper {
   background-color: transparent;
 }
 .content_wrapper .panel_wrapper .display_wrapper svg {
-  margin-bottom: 20px;
   width: 20em;
   height: 20em;
   background: url("./imgs/custom.png") no-repeat;
@@ -320,6 +319,12 @@ header img {
 }
 .content_wrapper .auth_form button {
   margin-bottom: 0.5em;
+}
+
+.svg_grid {
+  display: grid;
+  margin: 0;
+  padding: 0;
 }
 
 input, select {

@@ -3,6 +3,7 @@ import data.Credentials
 import data.PanelStateOptions
 import io.ktor.client.*
 import io.ktor.utils.io.errors.*
+import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,8 +11,10 @@ import kotlinx.coroutines.launch
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.MouseEvent
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -20,6 +23,7 @@ import react.dom.*
 import remote.PanelService
 import remote.dto.*
 import kotlin.math.round
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 val testArr: List<ShotsResponseElement> = listOf(
@@ -57,39 +61,41 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
 
             div("display_wrapper") {
                 div("display") {
-                    mySVG(5.0, state.shotList)
-                    //attrs.onClickFunction
-                    attrs {
-                        id = "svg_div"
-                        onClickFunction = { event ->
-                            console.log(event)
-                            //val shit = event.
-                            val posLeft = (event.currentTarget as HTMLDivElement).offsetLeft
-                            val posTop = (event.currentTarget as HTMLDivElement).offsetTop
-                            val width = (event.currentTarget as HTMLDivElement).offsetWidth
-                            val posHeight = (event.currentTarget as HTMLDivElement).offsetHeight
-                            console.log(
-                                "first: ",
-                                posLeft.toString(),
-                                posTop.toString(),
-                                width.toString(),
-                                posHeight.toString()
-                            );
-                            // TODO: get cursor
-                            var x = 2
-                            var y = 1.5
-                            if (props.coordinates.R != null){
-                                props.coordinates.x = round((Random.nextDouble()* props.coordinates.R!! *2 - props.coordinates.R!!)*10) / 10
-                                props.coordinates.y = round((Random.nextDouble()* props.coordinates.R!! *2 - props.coordinates.R!!)*10) / 10
-                                setState(PanelState(state.panelState, props.coordinates, state.shotList))
-                            }
+                    div("svg_grid") {
+                        mySVG(state.coords.R ?: 5.0, state.shotList)
 
+                        //attrs.onClickFunction
+                        attrs {
+                            id = "svg_div"
+                            onClickFunction = { event ->
+                                // properties
+                                val mouseLeft = (event.unsafeCast<MouseEvent>()).clientX
+                                val mouseTop = (event.unsafeCast<MouseEvent>()).clientY
+                                val width: Double = (event.currentTarget as HTMLDivElement).offsetWidth.toDouble()
+                                val height: Double = (event.currentTarget as HTMLDivElement).offsetHeight.toDouble()
+                                val deltaLeft = (event.currentTarget as HTMLDivElement).offsetLeft
+                                val deltaTop = (event.currentTarget as HTMLDivElement).offsetTop
+                                val headerElement: Element? = document.getElementById("header")
+                                val headerHeight: Int = (headerElement?.clientHeight ?: 32) + 10
+                                // relative values
+                                val mouseLeftRelative: Double = (mouseLeft - deltaLeft).toDouble()
+                                val mouseTopRelative: Double = (mouseTop - deltaTop - headerHeight).toDouble()
+                                val r: Double = props.coordinates.R ?: 5.0
+                                // calculation
+                                val x: Double = ((2.0 * mouseLeftRelative * r / width - r)*10).roundToInt().toDouble()/10
+                                val y: Double = ((r - 2.0 * mouseTopRelative * r / height)*10).roundToInt().toDouble()/10
+
+                                if (props.coordinates.R != null) {
+                                    props.coordinates.x = x
+                                    props.coordinates.y = y
+                                    setState(PanelState(state.panelState, props.coordinates, state.shotList))
+                                }
+                            }
                         }
                     }
-
                 }
 
-                p { +state.coords.findMistakes().toString() }
+                p { +state.coords.findMistakes() }
                 div("Block") {
                     input(classes = "inputs_x", name = "x_input") {
                         attrs {
@@ -157,7 +163,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                     +"x:${state.coords.x} y:${state.coords.y} R:${state.coords.R}"
                 }
             }
-            
+
 
             div("datatable") {
                 // request button
@@ -207,8 +213,8 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
     private fun regFormat(datetime: String): String {
         val regEx = Regex(".*(?=:)")
         val formatted: MatchResult? = regEx.find(datetime.replace('-','.'))
-        console.log("formatted to ${formatted?.value?.toString() ?: ""}")
-        return formatted?.value?.toString() ?: ""
+        console.log("formatted to ${formatted?.value ?: ""}")
+        return formatted?.value ?: ""
     }
 
     private fun logoutPOST() {
@@ -217,7 +223,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
 
     private fun shotRequestPOST(shotRequest: ShotRequest) {
         console.log("sending request: $shotRequest")
-        var job = CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 val response: ShotResponse = panelService.shot(shotRequest)
                 if (response.hit) setState(PanelState(panelState = PanelStateOptions.HIT, state.coords, state.shotList))
@@ -232,7 +238,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
 
     private fun shotsTablePOST(shotsRequest: ShotsRequest) {
         console.log("requesting table data (shots)")
-        var job = CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 val response: ShotsResponse = panelService.shots(shotsRequest)
                 if (response.shots != null && response.shots?.isNotEmpty() == true) {

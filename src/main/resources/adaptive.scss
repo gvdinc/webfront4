@@ -1,8 +1,7 @@
 //src
 $toy_img_wall4K: url("./imgs/toy_story_wall4K.jpg");
 $toy_img_wall: url("./imgs/toy_story_wallHD.jpg");
-$toy_img_footer: url("./imgs/toy_story_floor.jpg") center 100% no-repeat;
-$zad_img: url("./imgs/img.png");
+$toy_img_footer: url("./imgs/toy_story_wallHD.jpg") center 100% no-repeat;
 $area_img: url("./imgs/custom.png");
 //fonts
 @font-face {
@@ -138,13 +137,12 @@ header{
     padding: 2% 1% 2% 1%; // T R B L
 
     p{
-      margin: 0;
+      margin: 20px 0 0 0;
       text-align: center;
     }
     .display_wrapper{
       background-color: transparent;
       svg{
-        margin-bottom: 20px;
         width: 20em;
         height: 20em;
         background: $area_img no-repeat;
@@ -299,6 +297,12 @@ header{
       margin-bottom: 0.5em;
     }
   }
+}
+
+.svg_grid{
+  display: grid;
+  margin:0;
+  padding:0;
 }
 
 input, select {
