@@ -16,3 +16,6 @@ fun main() {
         }
     }
 }
+
+// TODO: idk: add checkboxes
+// TODO: launch to the server

@@ -69,6 +69,11 @@ header {
   font-size: 1em;
   color: rgb(1, 61, 123);
   background-color: rgb(247, 212, 68);
+  -moz-user-select: none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 @media (min-width: 1215px) {
   header .header__logo {
@@ -107,6 +112,8 @@ header p {
   padding: 0.1em 1em 0;
 }
 header img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
   height: 100%;
   padding: 0 2% 0 2%;
 }
@@ -130,13 +137,22 @@ header img {
   margin: 20px 0 0 0;
   text-align: center;
 }
-.content_wrapper .panel_wrapper .display_wrapper {
-  background-color: transparent;
-}
 .content_wrapper .panel_wrapper .display_wrapper svg {
   width: 20em;
   height: 20em;
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.content_wrapper .panel_wrapper .display_wrapper .svg_V {
+  width: 20em;
+  height: 20em;
   background: url("./imgs/custom.png") no-repeat;
+  background-size: 100%;
+}
+.content_wrapper .panel_wrapper .display_wrapper .svg_M {
+  width: 20em;
+  height: 20em;
+  background: url("./imgs/customM.png") no-repeat;
   background-size: 100%;
 }
 .content_wrapper .panel_wrapper .Block {

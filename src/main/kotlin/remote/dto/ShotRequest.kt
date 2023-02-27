@@ -8,10 +8,11 @@ data class ShotRequest(
     val password_hash: String,
     var x: Double? = null,
     var y: Double? = null,
-    var R: Double? = null
+    var R: Double? = null,
+    val area_id: String,
 ) {
     override fun toString(): String {
-        return "ShotRequest(x=$x, y=$y, R=$R)"
+        return "ShotRequest(x=$x, y=$y, R=$R, area_id=$area_id)"
     }
 
     fun findMistakes(): String{

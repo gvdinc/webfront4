@@ -2,6 +2,7 @@ import components.authForm
 import components.myHeader
 import data.AuthState
 import data.Credentials
+import data.Variant
 import io.ktor.client.*
 import io.ktor.client.engine.js.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -12,18 +13,18 @@ import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.div
-import react.dom.p
-import react.dom.style
 import remote.dto.ShotRequest
 
 external interface AppProps : RProps{
     var credentials: Credentials
+    var variant: Variant
 }
 
-data class AuthorizationState(val authState: AuthState = AuthState.UNAUTHORIZED) : RState
+data class AppState(
+    val authState: AuthState = AuthState.UNAUTHORIZED, val variant: Variant = Variant.VADIM) : RState
 
 
-class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
+class App(props: AppProps) : RComponent<AppProps, AppState>(props){
     private val client = HttpClient(Js) {
         install(ContentNegotiation) {
             json(Json {
@@ -34,25 +35,41 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
     }
 
     init {
-        state = AuthorizationState(props.credentials.state)
+        state = AppState(props.credentials.state)
     }
 
     override fun RBuilder.render() {
-        myHeader()
+        myHeader(state.variant, ::changeVariant) // here - logic of variant choice
         div("content_wrapper") {
             if (state.authState == AuthState.UNAUTHORIZED) {
                 authForm(::authFormUpdate, client)
             } else {
-                child(Panel::class) {
-                    attrs.exitFunction = (::authExit)
-                    attrs.credentials = props.credentials
-                    attrs.httpClient = client
-                    attrs.coordinates = ShotRequest(props.credentials.login, props.credentials.password)
+                when (state.variant){
+                    Variant.VADIM -> {
+                        child(Panel::class) {
+                            attrs.exitFunction = (::authExit)
+                            attrs.credentials = props.credentials
+                            attrs.httpClient = client
+                            attrs.coordinates = ShotRequest(props.credentials.login, props.credentials.password, area_id = Variant.VADIM.area_id)
+                        }
+                    }
+                    Variant.MIRON -> {
+                        child(PanelM::class) {
+                            attrs.exitFunction = (::authExit)
+                            attrs.credentials = props.credentials
+                            attrs.httpClient = client
+                            attrs.coordinates = ShotRequest(props.credentials.login, props.credentials.password, area_id = Variant.MIRON.area_id)
+                        }
+                    }
                 }
+
             }
         }
     }
-
+    private fun changeVariant(){
+        if (state.variant == Variant.VADIM) {setState(AppState(state.authState, Variant.MIRON))}
+        else {setState(AppState(state.authState, Variant.VADIM))}
+    }
 
     private fun authExit(){
         credentialsUpdate(null)
@@ -74,7 +91,7 @@ class App(props: AppProps) : RComponent<AppProps, AuthorizationState>(props){
     }
 
     private fun stateUpdate(){
-        setState(AuthorizationState(authState = props.credentials.state))
+        setState(AppState(authState = props.credentials.state))
     }
 
     private fun credentialsUpdate(newCred: Credentials?){

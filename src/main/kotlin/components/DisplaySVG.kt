@@ -1,5 +1,6 @@
 package components
 
+import data.Variant
 import kotlinx.html.HTMLTag
 import react.RBuilder
 import react.ReactElement
@@ -14,11 +15,12 @@ inline fun RBuilder.custom(tagName: String, block: RDOMBuilder<HTMLTag>.() -> Un
 }
 
 // example use
-fun RBuilder.mySVG(R: Double, mass: List<ShotsResponseElement>? = null) {
+fun RBuilder.mySVG(R: Double, mass: List<ShotsResponseElement>? = null, variant: Variant = Variant.VADIM) {
     val pointHitColor = "#0023c7"
     val pointMissedColor = "#b40000"
 
-    svg(classes = "svg_img") {
+    svg(classes = ("svg_"+ variant.classPrefix)) {
+
         attrs["width"] = 200.0
         attrs["height"] = 200.0
         attrs["viewBox"] = "0 0 ${2*R} ${2*R}"
@@ -69,7 +71,5 @@ fun RBuilder.mySVG(R: Double, mass: List<ShotsResponseElement>? = null) {
 
             }
         }
-
-
     }
 }

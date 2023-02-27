@@ -1,4 +1,6 @@
 //src
+$svg_img_V: url("./imgs/custom.png");
+$svg_img_M: url("./imgs/customM.png");
 $toy_img_wall4K: url("./imgs/toy_story_wall4K.jpg");
 $toy_img_wall: url("./imgs/toy_story_wallHD.jpg");
 $toy_img_footer: url("./imgs/toy_story_wallHD.jpg") center 100% no-repeat;
@@ -81,6 +83,14 @@ header{
   @include set_font(toy_font_large, 1em);
   background-color: $color_toy_yellow;
 
+
+  -moz-user-select: none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+
   @media ($m_desk) {
     .header__logo{
       display: flex;
@@ -116,6 +126,8 @@ header{
     padding: 0.1em 1em 0;
   }
   img{
+    -webkit-user-select: none;
+    -moz-user-select: none;
     height: 100%;
     padding: 0 2% 0 2%;
   }
@@ -141,11 +153,23 @@ header{
       text-align: center;
     }
     .display_wrapper{
-      background-color: transparent;
+      //background-color: transparent;
       svg{
         width: 20em;
         height: 20em;
-        background: $area_img no-repeat;
+        background-repeat: no-repeat;
+        background-size: 100%;
+      }
+      .svg_V{
+        width: 20em;
+        height: 20em;
+        background: $svg_img_V no-repeat;
+        background-size: 100%;
+      }
+      .svg_M{
+        width: 20em;
+        height: 20em;
+        background: $svg_img_M no-repeat;
         background-size: 100%;
       }
     }

@@ -25,32 +25,27 @@ import remote.PanelService
 import remote.dto.*
 import kotlin.math.roundToInt
 
-val testArr: List<ShotsResponseElement> = listOf(
-    ShotsResponseElement(x=1.0, y=2.0, R=3.0, hit = true, datetime = "2023-02-16 19:56:58.129000", processing_time_nano = 16600),
-    ShotsResponseElement(x=0.2, y=0.0, R=1.0, hit = false, datetime = "2023-02-16 20:07:14.952000", processing_time_nano = 4100),
-    ShotsResponseElement(x=-2.0, y=-4.0, R=8.0, hit = true, datetime = "2023-02-17 09:14:10.019000", processing_time_nano = 16800)
-)
-
-external interface PanelProps: RProps{
+external interface PanelMProps: RProps{
     var exitFunction : () -> Unit
     var httpClient: HttpClient
     var credentials: Credentials
     var coordinates: ShotRequest
 }
 
-data class PanelState(
+data class PanelMState(
     var panelState: PanelStateOptions,
     val coords: ShotRequest,
     var shotList: List<ShotsResponseElement>? = null,
     var displaySize: Double = window.innerWidth.toDouble()
 ) : RState
 
-class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
+class PanelM(props: PanelMProps): RComponent<PanelMProps, PanelMState>(props) {
     private val panelService: PanelService = PanelService.create(props.httpClient)
+
     init {
-        state = PanelState(
+        state = PanelMState(
             PanelStateOptions.NOT_REQUESTED, 
-            ShotRequest(props.credentials.login, props.credentials.password, area_id = Variant.VADIM.area_id),
+            ShotRequest(props.credentials.login, props.credentials.password, area_id = Variant.MIRON.area_id),
             null
         )
     }
@@ -61,7 +56,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
             div("display_wrapper") {
                 div("display") {
                     div("svg_grid") {
-                        mySVG(state.coords.R ?: 5.0, state.shotList, Variant.VADIM)
+                        mySVG(state.coords.R ?: 5.0, state.shotList, Variant.MIRON)
 
                         //attrs.onClickFunction
                         attrs {
@@ -87,7 +82,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                                 if (props.coordinates.R != null) {
                                     props.coordinates.x = x
                                     props.coordinates.y = y
-                                    setState(PanelState(state.panelState, props.coordinates, state.shotList))
+                                    setState(PanelMState(state.panelState, props.coordinates, state.shotList))
                                 }
                             }
                         }
@@ -107,7 +102,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                                         //console.error("unable to cast to Double: ${e.message}")
                                         null
                                     }
-                                setState(PanelState(state.panelState, props.coordinates, state.shotList))
+                                setState(PanelMState(state.panelState, props.coordinates, state.shotList))
                             }
                         }
                     }
@@ -122,7 +117,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                                         //console.error("unable to cast to Double: ${e.message}")
                                         null
                                     }
-                                setState(PanelState(state.panelState, props.coordinates, state.shotList))
+                                setState(PanelMState(state.panelState, props.coordinates, state.shotList))
                             }
                         }
                     }
@@ -137,7 +132,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                                         //console.error("unable to cast to Double: ${e.message}")
                                         null
                                     }
-                                setState(PanelState(state.panelState, props.coordinates, state.shotList))
+                                setState(PanelMState(state.panelState, props.coordinates, state.shotList))
                             }
                         }
                     }
@@ -168,9 +163,8 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
                 // request button
                 button { + "Загрузить историю"
                     attrs.onClickFunction = {shotsTablePOST(shotsRequest = ShotsRequest(
-                        props.credentials.login, props.credentials.password, Variant.VADIM.area_id
+                        props.credentials.login, props.credentials.password, Variant.MIRON.area_id
                     ))}
-                    //setState(PanelState(state.panelState, props.coordinates, testArr)) // for testing
                 }
                 table {
                     thead {
@@ -212,7 +206,7 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
     private fun regFormat(datetime: String): String {
         val regEx = Regex(".*(?=:)")
         val formatted: MatchResult? = regEx.find(datetime.replace('-','.'))
-        //console.log("formatted to ${formatted?.value ?: ""}")
+        console.log("formatted to ${formatted?.value ?: ""}")
         return formatted?.value ?: ""
     }
 
@@ -225,9 +219,9 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val response: ShotResponse = panelService.shot(shotRequest)
-                if (response.hit) setState(PanelState(panelState = PanelStateOptions.HIT, state.coords, state.shotList))
+                if (response.hit) setState(PanelMState(panelState = PanelStateOptions.HIT, state.coords, state.shotList))
                 else {
-                    setState(PanelState(panelState = PanelStateOptions.MISSED, state.coords, state.shotList))
+                    setState(PanelMState(panelState = PanelStateOptions.MISSED, state.coords, state.shotList))
                 }
             } catch (e: IOException) {
                 console.log(e.message)
@@ -241,14 +235,14 @@ class Panel(props: PanelProps): RComponent<PanelProps, PanelState>(props) {
             try {
                 val response: ShotsResponse = panelService.shots(shotsRequest)
                 if (response.shots != null && response.shots?.isNotEmpty() == true) {
-                    setState(PanelState(panelState = PanelStateOptions.TABLE_LOADED, state.coords, response.shots))
+                    setState(PanelMState(panelState = PanelStateOptions.TABLE_LOADED, state.coords, response.shots))
                 }
                 else{
-                    setState(PanelState(panelState = PanelStateOptions.TABLE_FAILED, state.coords,null))
+                    setState(PanelMState(panelState = PanelStateOptions.TABLE_FAILED, state.coords,null))
                 }
             } catch (e: IOException) {
                 console.error(e.message)
-                setState(PanelState(panelState = PanelStateOptions.TABLE_FAILED, state.coords,null))
+                setState(PanelMState(panelState = PanelStateOptions.TABLE_FAILED, state.coords,null))
             }
         }
     }
