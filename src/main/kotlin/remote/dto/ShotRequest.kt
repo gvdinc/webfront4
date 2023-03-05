@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShotRequest(
     val login: String,
-    val password_hash: String,
+    val password: String,
     var x: Double? = null,
     var y: Double? = null,
     var R: Double? = null,

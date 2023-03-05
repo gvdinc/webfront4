@@ -4,12 +4,11 @@ package remote
 
 object URLS {
     private const val port = 8081
-    private const val serverUrl: String = "http://localhost:$port"
+    private const val serverUrl: String = "http://grebenkin.pro:$port"
 
     // request urls
     const val REGISTER = "$serverUrl/register"
     const val LOGIN = "$serverUrl/login"
-    const val LOGOUT = "$serverUrl/logout"
     const val SHOT = "$serverUrl/shot"
     const val SHOTS = "$serverUrl/shots"
 

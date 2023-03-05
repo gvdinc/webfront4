@@ -63,7 +63,7 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
             attrs{
                 id = "login_button"
                 onClickFunction = {
-                    val request = LoginRequest(login = loginVar, password_hash = passVar)
+                    val request = LoginRequest(login = loginVar, password = passVar)
 
                     var job = CoroutineScope(Dispatchers.Main).launch {
                         val resp: LoginResponse =
@@ -95,7 +95,7 @@ val AuthForm: FunctionalComponent<AuthFormProps> = functionalComponent { props -
             attrs{
                 id = "register_button"
                 onClickFunction = {
-                    val request = RegisterRequest(login = loginVar, password_hash = passVar)
+                    val request = RegisterRequest(login = loginVar, password = passVar)
 
                     var job = CoroutineScope(Dispatchers.Main).launch() {
                         val resp: RegisterResponse =
